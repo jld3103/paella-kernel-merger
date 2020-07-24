@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 if [ ! -d configs ]; then
   git clone https://android.googlesource.com/kernel/configs
   (cd configs && git config pull.ff only)
@@ -51,6 +52,9 @@ if [ "$(git diff "$msm8916_head"~ "$msm8916_head" | sha256sum)" != "$(git diff "
   done
 fi
 
+if [ "$(git diff "$msm8916_head"~ "$msm8916_head" | sha256sum)" == "$(git diff "$aosp_head"~2 "$aosp_head"~ | sha256sum)" ]; then
+  git reset --hard @~
+fi
 git apply ../*.patch
 
 ../merge_config_intelligently.sh \
