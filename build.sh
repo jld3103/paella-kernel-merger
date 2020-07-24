@@ -51,8 +51,7 @@ if [ "$(git diff "$msm8916_head"~ "$msm8916_head" | sha256sum)" != "$(git diff "
   done
 fi
 
-# Small fix for recursive dependency
-sed -i "s/depends on QCOM_SCM=y//" drivers/iommu/Kconfig
+git apply ../*.patch
 
 ../merge_config_intelligently.sh \
   arch/arm64/configs/paella_defconfig \
