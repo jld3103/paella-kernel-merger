@@ -72,7 +72,7 @@ git commit -m "Add commits from msm8916"
   "../configs/$configs_version/android-recommended.config" \
   "../configs/$configs_version/android-recommended-arm64.config" || exit 1
 sed -i "s/=m/=y/" arch/arm64/configs/paella_defconfig
-printf "CONFIG_ARM64_PTR_AUTH=n\nCONFIG_HW_RANDOM=y\nCONFIG_EFIVAR_FS=y" >>arch/arm64/configs/paella_defconfig
+printf "CONFIG_ARM64_PTR_AUTH=y\nCONFIG_HW_RANDOM=y\nCONFIG_EFIVAR_FS=y" >>arch/arm64/configs/paella_defconfig
 git add .
 git commit -m "Add paella_defconfig"
 
