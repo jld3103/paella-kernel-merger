@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 if [ ! -d configs ]; then
   git clone https://android.googlesource.com/kernel/configs
   (cd configs && git config pull.ff only)
@@ -39,29 +39,21 @@ git checkout msm8916
 git reset --hard msm8916/rebase
 git pull
 msm8916_head=$(git rev-parse HEAD)
+msm8916_merge_base=$(git merge-base msm8916 linux)
 git checkout --track -b aosp aosp/android-mainline 2>/dev/null || true
 git checkout aosp
 git reset --hard aosp/android-mainline
 git pull
-aosp_head=$(git rev-parse HEAD)
-
-msm8916_merge_base=$(git merge-base msm8916 linux)
-aosp_merge_base=$(git merge-base aosp linux)
 
 git branch -D paella-mainline >/dev/null 2>&1 || true
 git checkout -b paella-mainline >/dev/null 2>&1 || true
-git reset --hard linux/master >/dev/null 2>&1 || true
-git reset --hard "$msm8916_merge_base"
+git reset --hard aosp/android-mainline >/dev/null 2>&1 || true
 
-git diff "$aosp_merge_base...$aosp_head" >patch.txt
-git apply --reject patch.txt
-rm patch.txt
-git add .
-git commit -m "Add commits from android-mainline"
+# Only temporary once msm8916 commits are rebased
+git apply --reject ../001-kconfig.patch
 
-git diff "$msm8916_merge_base...$msm8916_head" >patch.txt
-git apply --reject patch.txt
-rm patch.txt
+git diff "$msm8916_merge_base...$msm8916_head" | git apply --reject
+git apply --reject ../002-vibrator.patch
 git add .
 git commit -m "Add commits from msm8916"
 
@@ -71,11 +63,7 @@ git commit -m "Add commits from msm8916"
   "../configs/$configs_version/android-base.config" \
   "../configs/$configs_version/android-recommended.config" \
   "../configs/$configs_version/android-recommended-arm64.config" || exit 1
+printf "CONFIG_ARM64_PTR_AUTH=y\nCONFIG_ARM64_BTI_KERNEL=y\nCONFIG_HW_RANDOM=y\nCONFIG_EFIVAR_FS=y" >>arch/arm64/configs/paella_defconfig
 sed -i "s/=m/=y/" arch/arm64/configs/paella_defconfig
-printf "CONFIG_ARM64_PTR_AUTH=y\nCONFIG_HW_RANDOM=y\nCONFIG_EFIVAR_FS=y" >>arch/arm64/configs/paella_defconfig
 git add .
 git commit -m "Add paella_defconfig"
-
-git apply ../001-selinux-cap-fix.patch
-git add .
-git commit -m "Add manual patches"

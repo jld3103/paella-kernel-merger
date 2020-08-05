@@ -1,0 +1,15 @@
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-bq-paella.dts b/arch/arm64/boot/dts/qcom/msm8916-bq-paella.dts
+index f2ddf328d313..56724b823b81 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-bq-paella.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-bq-paella.dts
+@@ -339,6 +339,10 @@ codec@f000 {
+ 			qcom,mbhc-vthreshold-high = <75 100 120 180 500>;
+ 			qcom,hphl-jack-type-normally-open;
+ 		};
++
++	    vibrator@c000 {
++	        status = "okay";
++	    };
+ 	};
+ };
+ 
