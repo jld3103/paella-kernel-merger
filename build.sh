@@ -8,4 +8,4 @@ CONFIG_ARM64_BTI_KERNEL=y
 EOL
 sed -i "s/=m/=y/" .config
 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
-  make Image.gz -j"$(nproc --all)" || (echo "Failed to build" && exit 1)
+  make Image.gz-dtb -j"$(nproc --all)" || (echo "Failed to build" && exit 1)

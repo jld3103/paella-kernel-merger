@@ -51,11 +51,14 @@ git reset --hard aosp/android-mainline >/dev/null 2>&1 || true
 
 # Only temporary once msm8916 commits are rebased
 git apply --reject ../001-kconfig.patch
+git apply --reject ../002-appended-dtb.patch
+git add .
+git commit -m "Add manual patches"
 
 git diff "$msm8916_merge_base...$msm8916_head" | git apply --reject
-git apply --reject ../002-vibrator.patch
+git apply --reject ../003-vibrator.patch
 git add .
-git commit -m "Add commits from msm8916"
+git commit -m "Add changes from msm8916"
 
 ../merge_config_intelligently.sh \
   arch/arm64/configs/paella_defconfig \
@@ -64,6 +67,8 @@ git commit -m "Add commits from msm8916"
   "../configs/$configs_version/android-recommended.config" \
   "../configs/$configs_version/android-recommended-arm64.config" || exit 1
 cat >>arch/arm64/configs/paella_defconfig <<EOL
+CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE=y
+CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES="qcom/msm8916-bq-paella qcom/msm8916-bq-paella-modem qcom/msm8916-mtp"
 CONFIG_HW_RANDOM=y
 CONFIG_EFIVAR_FS=y
 CONFIG_ARM64_PTR_AUTH=y
